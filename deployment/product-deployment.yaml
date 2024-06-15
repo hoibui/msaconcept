@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productservice
+  template:
+    metadata:
+      labels:
+        app: productservice
+    spec:
+      imagePullSecrets:
+        - name: dockerhub
+      containers:
+        - name: productservice
+          image: hoibui/product:1.0
+          env:
+            - name: READ_DATABASE_CONNECTION_STRING
+              value: "Host=172.19.0.1;port=5432;Database=Product;Username=root;Password=secret"
+            - name: WRITE_DATABASE_CONNECTION_STRING
+              value: "Host=172.19.0.1;port=5432;Database=Product;Username=root;Password=secret"
+            - name: REDIS_HOST
+              value: "172.21.0.1:6379"
+          ports:
+            - containerPort: 8080

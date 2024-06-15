@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apigateway
+  template:
+    metadata:
+      labels:
+        app: apigateway
+    spec:
+      imagePullSecrets:
+      - name: dockerhub
+      containers:
+      - name: apigateway
+        image: hoibui/api-gateway:1.0.1
+        env:
+        - name: JWT_ISSUER
+          value: "identity-manager-service:8080"
+        - name: JWT_AUDIENCE
+          value: "product-service"
+        - name: JWT_KEY
+          value: "SldUQXV0aGVudGljYXRpb25ISUdIc2VjdXJlZFBhc3N3b3JkVlZWcDFPSDdYenly"
+        ports:
+        - containerPort: 8080

@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: identity-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: identitymanager
+  template:
+    metadata:
+      labels:
+        app: identitymanager
+    spec:
+      imagePullSecrets:
+      - name: dockerhub
+      containers:
+      - name: identitymanager
+        image: hoibui/identity-manager:1.3
+        env:
+        - name: CONN_STR
+          value: "Host=172.19.0.1;port=5432;Database=IdentityServer;Username=root;Password=secret"
+        - name: SECRET
+          value: "SldUQXV0aGVudGljYXRpb25ISUdIc2VjdXJlZFBhc3N3b3JkVlZWcDFPSDdYenly"
+        - name: VALID_ISSUER
+          value: "identity-manager-service:8080"
+        - name: VALID_AUDIENCE
+          value: "product-service"
+        - name: TOKEN_VALIDITY_IN_MINUTES
+          value: "100"
+        - name: REFRESH_TOKEN_VALIDITY_IN_DAYS
+          value: "3"        
+        ports:
+        - containerPort: 8080

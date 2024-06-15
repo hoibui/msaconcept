@@ -1,0 +1,42 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/identity/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5076
+        }
+      ],
+      "UpstreamHeaderTransform": {
+        "X-Forwarded-For": "{RemoteIpAddress}"
+      },
+      "UpstreamPathTemplate": "/identity/{catchAll}",
+      "UpstreamHttpMethod": [ "Put", "Delete", "Post", "Get" ],
+      "RateLimitOptions": {
+        "ClientWhitelist": [ "MyClient" ],
+        "EnableRateLimiting": true,
+        "Period": "15s",
+        "PeriodTimespan": 1,
+        "Limit": 1
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/Products/{cathAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5064
+        }
+      ],
+
+      "UpstreamPathTemplate": "/api/v{version}/Products/{cathAll}",
+      "UpstreamHttpMethod": [ "Put", "Delete", "Post", "Get" ]
+    }
+  ],
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5245"
+  }
+}

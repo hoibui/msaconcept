@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  identityserver:
+    image: ${DOCKER_REGISTRY-}identityserver
+    build:
+      context: .
+      dockerfile: IdentityServer/IdentityServer/Dockerfile
+
+  product.api:
+    image: ${DOCKER_REGISTRY-}product
+    build:
+      context: .
+      dockerfile: ProductService/Product.API/Dockerfile
+
