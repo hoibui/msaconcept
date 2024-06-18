@@ -6,6 +6,7 @@ public static class ApiRoutes
     public static class Product
     {
         public const string CREATE = "create";
+        public const string GET_LANDING_PAGE = "trend";
         public const string GET_LIST = "list";
     }
 }

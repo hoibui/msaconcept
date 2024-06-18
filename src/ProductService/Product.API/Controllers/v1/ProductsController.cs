@@ -23,6 +23,12 @@ public class ProductsController : ControllerBase
         return await _mediator.Send(request);
     }
     
+    [HttpGet(ApiRoutes.Product.GET_LANDING_PAGE)]
+    public async Task<IActionResult> GetLandingPageAsync([FromQuery] GetProductTrendRequest request)
+    {
+        return await _mediator.Send(request);
+    }
+    
     [HttpGet(ApiRoutes.Product.GET_LIST)]
     public async Task<IActionResult> GetListAsync([FromQuery] GetProductRequest request)
     {

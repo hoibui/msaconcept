@@ -16,7 +16,7 @@ spec:
       - name: dockerhub
       containers:
       - name: apigateway
-        image: hoibui/api-gateway:1.0.1
+        image: hoibui/api-gateway:1.0.2
         env:
         - name: JWT_ISSUER
           value: "identity-manager-service:8080"

@@ -16,7 +16,7 @@ spec:
         - name: dockerhub
       containers:
         - name: productservice
-          image: hoibui/product:1.0
+          image: hoibui/product:1.1
           env:
             - name: READ_DATABASE_CONNECTION_STRING
               value: "Host=172.19.0.1;port=5432;Database=Product;Username=root;Password=secret"
@@ -24,5 +24,7 @@ spec:
               value: "Host=172.19.0.1;port=5432;Database=Product;Username=root;Password=secret"
             - name: REDIS_HOST
               value: "172.21.0.1:6379"
+            - name: RABBIT_MQ
+              value: "amqp://admin:password@172.23.0.1:5672"
           ports:
             - containerPort: 8080

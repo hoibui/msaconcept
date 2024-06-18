@@ -12,7 +12,7 @@ public class ProductViewModel
         Name = entity.Name;
         Stock = entity.Stock;
         ImageUrl = entity.ImageUrl;
-
+        Id = entity.Id;
     }
 
     public int Page { get; set; } = 1;
@@ -23,4 +23,5 @@ public class ProductViewModel
     public string Title { get; set; }
     public decimal Price { get; set; }
     public int Stock { get; set; }
+    public Guid Id { get; set; }
 }

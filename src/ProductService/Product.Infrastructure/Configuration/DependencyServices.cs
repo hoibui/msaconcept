@@ -24,6 +24,7 @@ public static class DependencyServices
         
         services.AddService<CreateProductRequest, CreateProductHandler>();
         services.AddService<GetProductRequest, GetProductHandler>();
+        services.AddService<GetProductTrendRequest, GetProductTrendHandler>();
         
         #endregion
 

@@ -18,7 +18,8 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "READ_DATABASE_CONNECTION_STRING": "Host=127.0.0.1;port=5432;Database=Product;Username=root;Password=secret",
         "WRITE_DATABASE_CONNECTION_STRING": "Host=127.0.0.1;port=5432;Database=Product;Username=root;Password=secret",
-        "REDIS_HOST": "127.0.0.1:6379"
+        "REDIS_HOST": "127.0.0.1:6379",
+        "RABBIT_MQ": "amqp://admin:password@localhost:5672"
       },
       "dotnetRunMessages": true
     },
@@ -30,7 +31,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "READ_DATABASE_CONNECTION_STRING": "Host=127.0.0.1;port=5432;Database=Product;Username=root;Password=secret",
-        "WRITE_DATABASE_CONNECTION_STRING": "Host=127.0.0.1;port=5432;Database=Product;Username=root;Password=secret"
+        "WRITE_DATABASE_CONNECTION_STRING": "Host=127.0.0.1;port=5432;Database=Product;Username=root;Password=secret",
+        "RABBIT_MQ": "amqp://admin:password@localhost:5672"
       },
       "dotnetRunMessages": true
     },
@@ -41,7 +43,8 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "READ_DATABASE_CONNECTION_STRING": "Host=127.0.0.1;port=5432;Database=Product;Username=root;Password=secret",
-        "WRITE_DATABASE_CONNECTION_STRING": "Host=127.0.0.1;port=5432;Database=Product;Username=root;Password=secret"
+        "WRITE_DATABASE_CONNECTION_STRING": "Host=127.0.0.1;port=5432;Database=Product;Username=root;Password=secret",
+        "RABBIT_MQ": "amqp://admin:password@localhost:5672"
       }
     }
   }

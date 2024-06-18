@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orderservice
+  template:
+    metadata:
+      labels:
+        app: orderservice
+    spec:
+      imagePullSecrets:
+        - name: dockerhub
+      containers:
+        - name: orderservice
+          image: hoibui/order:1.0
+          env:
+            - name: READ_DATABASE_CONNECTION_STRING
+              value: "Host=172.19.0.1;port=5432;Database=Order;Username=root;Password=secret"
+            - name: WRITE_DATABASE_CONNECTION_STRING
+              value: "Host=172.19.0.1;port=5432;Database=Order;Username=root;Password=secret"
+            - name: RABBIT_MQ
+              value: "amqp://admin:password@172.23.0.1:5672"
+          ports:
+            - containerPort: 8080

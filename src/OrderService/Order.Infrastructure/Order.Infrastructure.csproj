@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="13.0.1" />
+      <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjectionFixed" Version="5.1.2" />
+      <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.0" />
+      <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Shared\Common\Common.csproj" />
+      <ProjectReference Include="..\..\Shared\DataHelper\DataHelper.csproj" />
+      <ProjectReference Include="..\..\Shared\Paginate\Paginate.csproj" />
+      <ProjectReference Include="..\Order.Data\Order.Data.csproj" />
+      <ProjectReference Include="..\Order.Service\Order.Service.csproj" />
+    </ItemGroup>
+
+</Project>
