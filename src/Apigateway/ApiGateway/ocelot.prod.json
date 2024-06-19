@@ -25,10 +25,52 @@
         }
       ],
       "UpstreamPathTemplate": "/api/v{version}/Products/{cathAll}",
-      "UpstreamHttpMethod": [ "Put", "Delete", "Post", "Get" ],
+      "UpstreamHttpMethod": [ "Put", "Delete", "Post"],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "Bearer"
       }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/Products/trend",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v{version}/Products/trend",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/Products/list",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "product-service",
+          "Port": 8080
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "UpstreamPathTemplate": "/api/v{version}/Products/list",
+      "UpstreamHttpMethod": [ "Get" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/OrderItems/{catchAll}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "order-service",
+          "Port": 8080
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "UpstreamPathTemplate": "/api/v{version}/OrderItems/{catchAll}",
+      "UpstreamHttpMethod": [ "Put", "Delete", "Post", "Get" ]
     }
   ],
   "GlobalConfiguration": {

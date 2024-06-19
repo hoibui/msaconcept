@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using Common.Middlewares;
 using Plain.RabbitMQ;
 using Product.API;
@@ -26,18 +27,22 @@ builder.Services.AddSingleton<ISubscriber>(s => new Subscriber(s.GetService<ICon
 
 builder.Services.AddHostedService<OrderCreatedListener>();
 
-
+builder.Services.AddExceptionHandler<ExceptionMiddleware>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddUnitOfWork();
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 builder.Services.AddMediator();
 builder.Services.AddAutoMappers();
 builder.Services.AddServices();
 
 var app = builder.Build();
+
+app.UseExceptionHandler(builder =>
+{
+
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -48,7 +53,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseExceptionHandler();
 
 app.UseAuthorization();
 

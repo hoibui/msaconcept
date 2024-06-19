@@ -1,9 +1,6 @@
-using System.Linq.Expressions;
 using System.Text.Json;
 using Common.ApiResponse;
 using Common.Constants;
-using Common.Enums;
-using Common.ErrorResult;
 using Common.Extensions;
 using DataHelper.EntityFramework.UnitOfwork.Interfaces;
 using MediatR;
@@ -46,7 +43,8 @@ public class GetProductTrendHandler: IRequestHandler<GetProductTrendRequest, Api
         catch (Exception ex)
         {
             _logger.LogError(ex.ToString());
-            return ApiResult.Failed(HttpCode.InternalServerError);
+            throw;
+            //return ApiResult.Failed(HttpCode.InternalServerError);
         }
     }
 
