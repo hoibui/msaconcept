@@ -26,7 +26,6 @@ builder.Services.AddSingleton<ISubscriber>(s => new Subscriber(s.GetService<ICon
 ));
 
 builder.Services.AddHostedService<OrderCreatedListener>();
-
 builder.Services.AddExceptionHandler<ExceptionMiddleware>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
