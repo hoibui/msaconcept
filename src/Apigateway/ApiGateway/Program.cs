@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
@@ -9,10 +10,23 @@ using Ocelot.Middleware;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
-
-// Configure authentication
+var Symmetric = false;
+// Symmetric
 var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")));
 var authenticationProviderKey = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256);
+
+// Asymmetric
+var rsa = RSA.Create();
+var publicKey = File.ReadAllText("./public_key.pem");
+rsa.ImportFromPem(publicKey);
+var  authenticationProviderKeyAsymmetric = new SigningCredentials(
+    key: new RsaSecurityKey(rsa),
+    algorithm: SecurityAlgorithms.RsaSha256);
+
+
+
+
+
 builder.Services
     .AddAuthentication()
     .AddJwtBearer("Bearer", options =>
@@ -21,9 +35,10 @@ builder.Services
         options.RequireHttpsMetadata = false;
         options.UseSecurityTokenValidators = false;
         options.TokenValidationParameters.ValidateActor = false;
-        options.TokenValidationParameters.ValidateIssuer = true;
-        options.TokenValidationParameters.ValidateAudience = true;
-        options.TokenValidationParameters.IssuerSigningKey = authenticationProviderKey.Key;
+        options.TokenValidationParameters.ValidateIssuer = false;
+        options.TokenValidationParameters.ValidateAudience = false;
+        options.TokenValidationParameters.IssuerSigningKey = Symmetric ? authenticationProviderKey.Key : authenticationProviderKeyAsymmetric.Key;
+        
         options.TokenValidationParameters.ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
     });
 

@@ -1,5 +1,6 @@
 using Common.ApiResponse;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Product.Service.Commands;
 using Product.Service.Queries;

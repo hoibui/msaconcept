@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using IdentityServer.Auth;
+using IdentityServer.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -16,20 +17,24 @@ public class AuthenticateController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly TokenService _tokenService;
     private readonly UserManager<ApplicationUser> _userManager;
+
 
     public AuthenticateController(
         UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole> roleManager,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        TokenService tokenService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _configuration = configuration;
+        _tokenService = tokenService;
     }
 
     [HttpPost]
-    [Route("login")]
+    [Route("login-symmetric")]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
         var user = await _userManager.FindByNameAsync(model.Username);
@@ -48,7 +53,8 @@ public class AuthenticateController : ControllerBase
             var token = CreateToken(authClaims);
             var refreshToken = GenerateRefreshToken();
 
-            _ = int.TryParse(Environment.GetEnvironmentVariable("REFRESH_TOKEN_VALIDITY_IN_DAYS"), out var refreshTokenValidityInDays);
+            _ = int.TryParse(Environment.GetEnvironmentVariable("REFRESH_TOKEN_VALIDITY_IN_DAYS"),
+                out var refreshTokenValidityInDays);
 
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
@@ -60,6 +66,44 @@ public class AuthenticateController : ControllerBase
                 Token = new JwtSecurityTokenHandler().WriteToken(token),
                 RefreshToken = refreshToken,
                 Expiration = token.ValidTo
+            });
+        }
+
+        return Unauthorized();
+    }
+
+    [HttpPost]
+    [Route("login-asymmetric")]
+    public async Task<IActionResult> LoginWithAsymmetric([FromBody] LoginModel model)
+    {
+        var user = await _userManager.FindByNameAsync(model.Username);
+        if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+        {
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            var authClaims = new List<Claim>
+            {
+                new(ClaimTypes.Name, user.UserName),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+            authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+
+
+            var token = _tokenService.GetToken(authClaims);
+            var refreshToken = GenerateRefreshToken();
+
+            _ = int.TryParse(Environment.GetEnvironmentVariable("REFRESH_TOKEN_VALIDITY_IN_DAYS"),
+                out var refreshTokenValidityInDays);
+
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(refreshTokenValidityInDays);
+
+            await _userManager.UpdateAsync(user);
+
+            return Ok(new
+            {
+                Token = token,
+                RefreshToken = refreshToken
             });
         }
 
@@ -190,8 +234,10 @@ public class AuthenticateController : ControllerBase
 
     private JwtSecurityToken CreateToken(List<Claim> authClaims)
     {
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET")));
-        _ = int.TryParse(Environment.GetEnvironmentVariable("TOKEN_VALIDITY_IN_MINUTES"), out var tokenValidityInMinutes);
+        var authSigningKey =
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET")));
+        _ = int.TryParse(Environment.GetEnvironmentVariable("TOKEN_VALIDITY_IN_MINUTES"),
+            out var tokenValidityInMinutes);
 
         var token = new JwtSecurityToken(
             Environment.GetEnvironmentVariable("VALID_ISSUER"),
@@ -219,7 +265,8 @@ public class AuthenticateController : ControllerBase
             ValidateAudience = false,
             ValidateIssuer = false,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET"))),
+            IssuerSigningKey =
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET"))),
             ValidateLifetime = false
         };
 

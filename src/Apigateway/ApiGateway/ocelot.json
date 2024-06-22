@@ -1,26 +1,19 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/identity/{catchAll}",
+      "DownstreamPathTemplate": "/api/Authenticate/{catchAll}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5076
+          "Port": 5001
         }
       ],
       "UpstreamHeaderTransform": {
         "X-Forwarded-For": "{RemoteIpAddress}"
       },
-      "UpstreamPathTemplate": "/identity/{catchAll}",
-      "UpstreamHttpMethod": [ "Put", "Delete", "Post", "Get" ],
-      "RateLimitOptions": {
-        "ClientWhitelist": [ "MyClient" ],
-        "EnableRateLimiting": true,
-        "Period": "15s",
-        "PeriodTimespan": 1,
-        "Limit": 1
-      }
+      "UpstreamPathTemplate": "/api/Authenticate/{catchAll}",
+      "UpstreamHttpMethod": [ "Put", "Delete", "Post", "Get" ]
     },
     {
       "DownstreamPathTemplate": "/api/v{version}/Products/{cathAll}",
@@ -33,7 +26,10 @@
       ],
 
       "UpstreamPathTemplate": "/api/v{version}/Products/{cathAll}",
-      "UpstreamHttpMethod": [ "Put", "Delete", "Post", "Get" ]
+      "UpstreamHttpMethod": [ "Put", "Delete", "Post", "Get" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
     }
   ],
   "GlobalConfiguration": {
