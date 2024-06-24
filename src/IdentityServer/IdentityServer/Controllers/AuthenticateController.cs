@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using IdentityServer.Auth;
 using IdentityServer.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -86,7 +87,7 @@ public class AuthenticateController : ControllerBase
                 new(ClaimTypes.Name, user.UserName),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
-            authClaims.AddRange(userRoles.Select(userRole => new Claim(ClaimTypes.Role, userRole)));
+            authClaims.AddRange(userRoles.Select(userRole => new Claim("role", userRole)));
 
 
             var token = _tokenService.GetToken(authClaims);

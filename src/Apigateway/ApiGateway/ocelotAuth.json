@@ -16,7 +16,7 @@
       "UpstreamHttpMethod": [ "Put", "Delete", "Post", "Get" ]
     },
     {
-      "DownstreamPathTemplate": "/api/v{version}/Product/trend",
+      "DownstreamPathTemplate": "/api/v{version}/Products/{cathAll}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -24,11 +24,26 @@
           "Port": 5064
         }
       ],
-      "UpstreamPathTemplate": "/api/v{version}/Product/trend",
+      "UpstreamPathTemplate": "/api/v{version}/Products/{cathAll}",
+      "UpstreamHttpMethod": [ "Put", "Delete", "Post"],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/v{version}/Products/trend",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5064
+        }
+      ],
+      "UpstreamPathTemplate": "/api/v{version}/Products/trend",
       "UpstreamHttpMethod": [ "Get" ]
     },
     {
-      "DownstreamPathTemplate": "/api/v{version}/Product/list",
+      "DownstreamPathTemplate": "/api/v{version}/Products/list",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -36,7 +51,10 @@
           "Port": 5064
         }
       ],
-      "UpstreamPathTemplate": "/api/v{version}/Product/list",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
+      "UpstreamPathTemplate": "/api/v{version}/Products/list",
       "UpstreamHttpMethod": [ "Get" ],
       "RateLimitOptions": {
         "EnableRateLimiting": true,
@@ -63,6 +81,9 @@
           "Port": 5065
         }
       ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer"
+      },
       "UpstreamPathTemplate": "/api/v{version}/OrderItems/{catchAll}",
       "UpstreamHttpMethod": [ "Put", "Delete", "Post", "Get" ]
     }

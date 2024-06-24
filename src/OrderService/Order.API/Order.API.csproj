@@ -11,6 +11,7 @@
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
     <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
         <PackageReference Include="MassTransit" Version="8.2.2" />
         <PackageReference Include="MassTransit.RabbitMQ" Version="8.2.2" />
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.6" />
@@ -30,6 +31,12 @@
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\..\Shared\Common\Common.csproj" />
+      <ProjectReference Include="..\..\Shared\Tracing\Tracing.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Update="public_key.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

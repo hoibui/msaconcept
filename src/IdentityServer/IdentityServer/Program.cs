@@ -3,10 +3,27 @@ using IdentityServer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(Environment.GetEnvironmentVariable("CONN_STR")));
+
+builder.Services.AddOpenTelemetry().WithMetrics(
+    (builder) =>
+    {
+        builder.AddAspNetCoreInstrumentation();
+        builder.AddHttpClientInstrumentation();
+    }
+).WithTracing(b =>
+{
+    b.SetResourceBuilder(
+            ResourceBuilder.CreateDefault().AddService(builder.Environment.ApplicationName))
+        .AddAspNetCoreInstrumentation()
+        .AddOtlpExporter(opts => { opts.Endpoint = new Uri("http://localhost:4317"); });
+});
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()

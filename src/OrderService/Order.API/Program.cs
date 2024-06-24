@@ -1,7 +1,10 @@
 using Common.Middlewares;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using Order.API;
 using Order.API.Db;
+using Orders.API.Extensions;
 using Plain.RabbitMQ;
 using RabbitMQ.Client;
 
@@ -13,6 +16,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAsymmetricAuthentication();
 builder.Services.AddExceptionHandler<ExceptionMiddleware>();
 builder.Services.AddProblemDetails();
 // Configure database
@@ -33,6 +37,15 @@ builder.Services.AddSingleton<ISubscriber>(s => new Subscriber(s.GetService<ICon
     "catalog_response_queue", //queue name
     "catalog_response_routingkey", // routing key
     ExchangeType.Topic));
+
+builder.Services.AddOpenTelemetry().WithTracing(b =>
+{
+    b.SetResourceBuilder(
+            ResourceBuilder.CreateDefault().AddService(builder.Environment.ApplicationName))
+        .AddAspNetCoreInstrumentation()
+        .AddOtlpExporter(opts => { opts.Endpoint = new Uri("http://localhost:4317"); });
+});
+
 
 builder.Services.AddHostedService<CatalogResponseListener>();
 

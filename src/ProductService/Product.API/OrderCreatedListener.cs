@@ -1,5 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Common.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using Plain.RabbitMQ;
 using Product.Data.DbContext;
@@ -32,7 +38,7 @@ public class OrderCreatedListener : IHostedService
                 var _context = scope.ServiceProvider.GetRequiredService<WriteDbContext>();
                 try
                 {
-                    Domain.Entities.Product catalogItem = _context.Products.Find(response.CatalogId);
+                    Product.Domain.Entities.Product catalogItem = _context.Products.Find(response.CatalogId);
 
                     if (catalogItem == null || catalogItem.Stock < response.Units)
                         throw new Exception();

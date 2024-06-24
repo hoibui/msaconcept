@@ -6,42 +6,42 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Serilog;
 using Ocelot.DependencyInjection;
+using Ocelot.Logging;
 using Ocelot.Middleware;
+using Ocelot.Provider.Kubernetes;
+using Ocelot.Provider.Polly;
+using Ocelot.Tracing.Butterfly;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Logging.ClearProviders().AddConsole();
 
-var Symmetric = false;
+
+//var Symmetric = string.IsNullOrEmpty(Environment.GetEnvironmentVariable("SYMETRICT_ENABLE"));
 // Symmetric
 var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY")));
 var authenticationProviderKey = new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256);
+
 
 // Asymmetric
 var rsa = RSA.Create();
 var publicKey = File.ReadAllText("./public_key.pem");
 rsa.ImportFromPem(publicKey);
-var  authenticationProviderKeyAsymmetric = new SigningCredentials(
-    key: new RsaSecurityKey(rsa),
-    algorithm: SecurityAlgorithms.RsaSha256);
-
-
-
-
+var  authenticationProviderKeyAsymmetric = new SigningCredentials(key: new RsaSecurityKey(rsa), algorithm: SecurityAlgorithms.RsaSha256);
 
 builder.Services
     .AddAuthentication()
     .AddJwtBearer("Bearer", options =>
     {
-        options.Audience = Environment.GetEnvironmentVariable("JWT_AUDIENCE");
         options.RequireHttpsMetadata = false;
         options.UseSecurityTokenValidators = false;
         options.TokenValidationParameters.ValidateActor = false;
         options.TokenValidationParameters.ValidateIssuer = false;
         options.TokenValidationParameters.ValidateAudience = false;
-        options.TokenValidationParameters.IssuerSigningKey = Symmetric ? authenticationProviderKey.Key : authenticationProviderKeyAsymmetric.Key;
-        
-        options.TokenValidationParameters.ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
+        options.TokenValidationParameters.IssuerSigningKey = authenticationProviderKeyAsymmetric.Key;
     });
-
 
 // Configure CORS
 builder.Services
@@ -59,12 +59,26 @@ builder.Services
     });
 
 // Configure health checks
-builder.Services
-    .AddHealthChecks()
-    .AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
+builder.Services.AddHealthChecks().AddCheck("self", () => HealthCheckResult.Healthy(), ["live"]);
 
 // Add Ocelot
-builder.Services.AddOcelot(builder.Configuration);
+builder.Services.AddOcelot(builder.Configuration).AddPolly().AddKubernetes();
+
+builder.Services.AddOpenTelemetry().WithMetrics(
+    (builder) =>
+    {
+        builder.AddAspNetCoreInstrumentation();
+        builder.AddHttpClientInstrumentation();
+        builder.AddPrometheusExporter();
+    }
+).WithTracing(b =>
+{
+    b.SetResourceBuilder(
+            ResourceBuilder.CreateDefault().AddService(builder.Environment.ApplicationName))
+        .AddAspNetCoreInstrumentation()
+        .AddOtlpExporter(opts => { opts.Endpoint = new Uri("http://localhost:4317"); });
+});
+    
 
 builder.Host.UseSerilog((context, services, loggerConfiguration) =>
 {
@@ -83,7 +97,6 @@ builder.Configuration.AddJsonFile("ocelot.json");
 WebApplication app = builder.Build();
 app.UseAuthentication();
 app.UseRouting();
-
 app.UseAuthorization();
 app.UseEndpoints(_ => { });
 
@@ -101,6 +114,14 @@ app.MapHealthChecks("/liveness", new HealthCheckOptions
 
 app.UseCors("CorsPolicy");
 
-await app.UseOcelot();
+var configuration = new OcelotPipelineConfiguration
+{
+    AuthorizationMiddleware = async (context, next) =>
+    {
+        await next.Invoke();
+    }
+};
 
+await app.UseOcelot(configuration);
+//await app.UseOcelot();
 await app.RunAsync();
