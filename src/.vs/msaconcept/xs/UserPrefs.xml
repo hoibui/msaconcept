@@ -3,19 +3,12 @@
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
-          <Node name="msaconcept">
-            <Node name="IdentityServer" expanded="True" />
-            <Node name="OrderService" expanded="True">
-              <Node name="Order.API" expanded="True" />
-            </Node>
+          <Node name="msaconcept" expanded="True">
+            <Node name="ApiGateway" expanded="True" />
             <Node name="Shared" expanded="True">
               <Node name="Common" expanded="True">
-                <Node name="Dependencies" expanded="True">
-                  <Node name="FrameworkReferences" expanded="True" />
-                </Node>
-                <Node name="ApiResponse" expanded="True">
-                  <Node name="ApiRoutes.cs" selected="True" />
-                </Node>
+                <Node name="Dependencies" expanded="True" />
+                <Node name="ApiResponse" expanded="True" />
               </Node>
             </Node>
           </Node>
@@ -23,13 +16,13 @@
       </Pad>
     </Pads>
   </MonoDevelop.Ide.Workbench>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.ProductService.Product.API PreferredExecutionTarget="/Applications/Google Chrome.app" />
-  <MonoDevelop.Ide.ItemProperties.IdentityManager.IdentityManager PreferredExecutionTarget="/Applications/Google Chrome.app" />
   <MonoDevelop.Ide.ItemProperties.docker-compose PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MultiItemStartupConfigurations />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.IdentityManager.IdentityManager PreferredExecutionTarget="/Applications/Google Chrome.app" />
 </Properties>
